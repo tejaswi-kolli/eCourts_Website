@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>eCourts Scraper</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* Optional CSS for better spacing */
+    .container { max-width: 600px; margin: auto; padding: 20px; font-family: Arial, sans-serif; }
+    label { display: block; margin-top: 10px; }
+    select, input[type="date"] { width: 100%; padding: 5px; margin-top: 5px; }
+    .buttons { margin-top: 15px; }
+    .checkbox-container { display: flex; align-items: center; margin-top: 10px; }
+    .checkbox-container label { margin-left: 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧑‍⚖️ eCourts Case Status Scraper</h1>
+
+    <form id="mainForm" method="POST" action="/download">
+      <label>State:</label>
+      <select id="state" name="state">
+        <option value="">Select State</option>
+      </select>
+
+      <label>District:</label>
+      <select id="district" name="district">
+        <option value="">Select District</option>
+      </select>
+
+      <label>Court Complex:</label>
+      <select id="complex" name="complex">
+        <option value="">Select Complex</option>
+      </select>
+
+      <label>Court Name:</label>
+      <select id="court" name="court">
+        <option value="">Select Court</option>
+      </select>
+
+      <label>Date (YYYY-MM-DD):</label>
+      <input type="date" name="date" id="date">
+
+      <div class="checkbox-container" style="display:flex; align-items:center; margin-top:10px;">
+        <input type="checkbox" name="download_all" id="download_all">
+        <span style="margin-left:5px;">
+          Download cause list for <strong>all judges</strong> in the complex (multiple PDFs → ZIP)
+        </span>
+      </div>
+
+      <div class="buttons">
+        <button type="submit">Download Cause List</button>
+      </div>
+    </form>
+
+    <div id="result" class="result-box" style="display:none;"></div>
+  </div>
+
+<script>
+async function fetchAndPopulate(endpoint, selectId, params = {}) {
+  try {
+    const url = new URL(endpoint, window.location.origin);
+    Object.keys(params).forEach(k => params[k] != null && url.searchParams.append(k, params[k]));
+    const resp = await fetch(url);
+    const data = await resp.json();
+    if (!data.success) throw new Error("fetch failed");
+    const sel = document.getElementById(selectId);
+    sel.innerHTML = "";
+    sel.appendChild(new Option(`Select ${selectId.charAt(0).toUpperCase() + selectId.slice(1)}`, ""));
+    data.items.forEach(it => {
+      const opt = new Option(it.label || it.value, it.value);
+      sel.appendChild(opt);
+    });
+  } catch (err) {
+    const sel = document.getElementById(selectId);
+    sel.innerHTML = "";
+    sel.appendChild(new Option("— Unable to load —", ""));
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  fetchAndPopulate("/fetch_states", "state");
+
+  document.getElementById("state").addEventListener("change", function() {
+    const state = this.value;
+    fetchAndPopulate("/fetch_districts?state=" + encodeURIComponent(state), "district");
+  });
+
+  document.getElementById("district").addEventListener("change", function() {
+    const state = document.getElementById("state").value;
+    const district = this.value;
+    fetchAndPopulate("/fetch_complexes?state=" + encodeURIComponent(state) + "&district=" + encodeURIComponent(district), "complex");
+  });
+
+  document.getElementById("complex").addEventListener("change", function() {
+    const complex = this.value;
+    fetchAndPopulate("/fetch_courts?complex=" + encodeURIComponent(complex), "court");
+  });
+
+  document.getElementById("mainForm").addEventListener("submit", function(e) {
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").textContent = "Preparing download... If nothing happens, check console.";
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+body {
+    font-family: Arial, sans-serif;
+    /* background image: put your image file in static folder and replace filename below */
+    background-image: url('ecourts_background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    color: #333;
+}
+.container {
+    width: 500px;
+    margin: 40px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+h1 {
+    text-align: center;
+    color: #004aad;
+}
+label {
+    display: block;
+    margin-top: 10px;
+}
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+button {
+    padding: 10px 20px;
+    margin: 10px 5px;
+    background-color: #004aad;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #0066ff;
+}
+.result-box {
+    margin-top: 20px;
+    background: #eef2ff;
+    padding: 15px;
+    border-radius: 8px;
+}
