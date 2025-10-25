@@ -20,8 +20,7 @@ This project demonstrates practical skills in **frontend, backend, and PDF gener
 
 ## Tech Stack
 - **Frontend:** HTML, CSS, JavaScript
-- **Backend:** Python Flask (or Node.js if you used it)
-- **PDF Generation:** jsPDF / Python FPDF
+- **Backend:** Python Flask
 - **Version Control:** GitHub
 
 
